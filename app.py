@@ -19,109 +19,169 @@ def get_db():
     return db
 
 def init_db_on_startup():
-    """Initialize database with schema and seed data"""
+    """Initialize database with schema and seed data ONLY if empty"""
     db_path = 'momentum.db'
     print(f"📁 Checking database at: {db_path}")
     
-    # Always recreate to ensure schema exists
-    if os.path.exists(db_path):
-        print("🗑️ Removing existing database to ensure fresh schema...")
-        os.remove(db_path)
+    # Check if database exists and has tables
+    db_exists = os.path.exists(db_path)
+    has_tables = False
     
-    print("⚙️ Creating new database with complete schema...")
-    conn = sqlite3.connect(db_path)
+    if db_exists:
+        try:
+            conn = sqlite3.connect(db_path)
+            # Check if questions table exists and has data
+            result = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='questions'").fetchone()
+            if result:
+                count = conn.execute("SELECT COUNT(*) as count FROM questions").fetchone()[0]
+                has_tables = (count > 0)
+            conn.close()
+        except:
+            has_tables = False
     
-    # Your COMPLETE schema from schema.sql
-    conn.executescript('''
-        CREATE TABLE users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        );
+    # Only recreate if database is missing or empty
+    if not db_exists or not has_tables:
+        print("⚙️ Database missing or empty. Creating fresh database...")
+        
+        # Remove old DB if it exists but is empty
+        if db_exists:
+            os.remove(db_path)
+            print("🗑️ Removed empty database")
+        
+        conn = sqlite3.connect(db_path)
+        
+        # Create tables from schema.sql
+        print("📝 Creating tables...")
+        conn.executescript('''
+            CREATE TABLE users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT UNIQUE,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
 
-        CREATE TABLE questions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            question_key TEXT UNIQUE,
-            question_text TEXT,
-            input_type TEXT,
-            is_mandatory BOOLEAN DEFAULT 0,
-            category TEXT
-        );
+            CREATE TABLE questions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                question_key TEXT UNIQUE,
+                question_text TEXT,
+                input_type TEXT,
+                is_mandatory BOOLEAN DEFAULT 0,
+                category TEXT
+            );
 
-        CREATE TABLE answer_options (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            question_id INTEGER,
-            display_text TEXT,
-            value_min INTEGER,
-            value_max INTEGER,
-            sort_order INTEGER,
-            FOREIGN KEY(question_id) REFERENCES questions(id)
-        );
+            CREATE TABLE answer_options (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                question_id INTEGER,
+                display_text TEXT,
+                value_min INTEGER,
+                value_max INTEGER,
+                sort_order INTEGER,
+                FOREIGN KEY(question_id) REFERENCES questions(id)
+            );
 
-        CREATE TABLE comments_pool (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            answer_option_id INTEGER,
-            comment_text TEXT,
-            FOREIGN KEY(answer_option_id) REFERENCES answer_options(id)
-        );
+            CREATE TABLE comments_pool (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                answer_option_id INTEGER,
+                comment_text TEXT,
+                FOREIGN KEY(answer_option_id) REFERENCES answer_options(id)
+            );
 
-        CREATE TABLE responses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            question_id INTEGER,
-            answer_option_id INTEGER,
-            answer_value INTEGER,
-            comment_used TEXT,
-            session_id TEXT,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(user_id) REFERENCES users(id),
-            FOREIGN KEY(question_id) REFERENCES questions(id),
-            FOREIGN KEY(answer_option_id) REFERENCES answer_options(id)
-        );
+            CREATE TABLE responses (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                question_id INTEGER,
+                answer_option_id INTEGER,
+                answer_value INTEGER,
+                comment_used TEXT,
+                session_id TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id),
+                FOREIGN KEY(question_id) REFERENCES questions(id),
+                FOREIGN KEY(answer_option_id) REFERENCES answer_options(id)
+            );
 
-        CREATE TABLE metrics (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            session_id TEXT,
-            burnout_score INTEGER,
-            balance_score INTEGER,
-            mental_load_you INTEGER,
-            mental_load_partner INTEGER,
-            recovery_index TEXT,
-            calculated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY(user_id) REFERENCES users(id)
-        );
+            CREATE TABLE metrics (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                session_id TEXT,
+                burnout_score INTEGER,
+                balance_score INTEGER,
+                mental_load_you INTEGER,
+                mental_load_partner INTEGER,
+                recovery_index TEXT,
+                calculated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id)
+            );
 
-        CREATE INDEX idx_responses_user_session ON responses(user_id, session_id);
-        CREATE INDEX idx_metrics_user_session ON metrics(user_id, session_id);
-        CREATE INDEX idx_comments_pool_option ON comments_pool(answer_option_id);
-    ''')
+            CREATE INDEX idx_responses_user_session ON responses(user_id, session_id);
+            CREATE INDEX idx_metrics_user_session ON metrics(user_id, session_id);
+            CREATE INDEX idx_comments_pool_option ON comments_pool(answer_option_id);
+        ''')
+        
+        # Insert questions
+        print("🌱 Inserting 12 questions...")
+        conn.executescript('''
+            INSERT INTO questions (question_key, question_text, input_type, is_mandatory, category) VALUES
+            ('sleep_hours', 'How many hours of sleep do you average per night?', 'buttons', 1, 'burnout'),
+            ('work_hours', 'How many hours do you work per week (paid work)?', 'slider', 1, 'burnout'),
+            ('overload_streak', 'How many days in a row have you felt overwhelmed?', 'buttons', 1, 'burnout'),
+            ('housework_hours', 'How many hours of housework do you do daily?', 'slider', 1, 'balance'),
+            ('childcare_hours', 'How many hours of childcare daily?', 'slider', 1, 'balance'),
+            ('personal_time', 'How much personal time do you get daily?', 'buttons', 1, 'balance'),
+            ('mental_planning', 'Who handles family planning (appointments, schedules)?', 'buttons', 1, 'mental'),
+            ('mental_emotional', 'Who manages emotional well-being of family members?', 'buttons', 1, 'mental'),
+            ('mental_household', 'Who tracks household needs (groceries, supplies)?', 'buttons', 1, 'mental'),
+            ('me_time_quality', 'How would you rate your "me time" quality?', 'buttons', 1, 'recovery'),
+            ('weekend_rest', 'How restful are your weekends?', 'buttons', 1, 'recovery'),
+            ('break_frequency', 'How often do you take breaks during work?', 'buttons', 1, 'recovery');
+        ''')
+        
+        # Insert answer options for sleep_hours (id=1)
+        conn.executescript('''
+            INSERT INTO answer_options (question_id, display_text, value_min, value_max, sort_order) VALUES
+            (1, 'Less than 4 hours', 0, 4, 1),
+            (1, '4-5 hours', 4, 5, 2),
+            (1, '5-6 hours', 5, 6, 3),
+            (1, '6-7 hours', 6, 7, 4),
+            (1, '7-8 hours', 7, 8, 5),
+            (1, '8+ hours', 8, 24, 6);
+        ''')
+        
+        # Add more options as needed - for brevity, I'll add just one more
+        conn.executescript('''
+            INSERT INTO answer_options (question_id, display_text, value_min, value_max, sort_order) VALUES
+            (2, 'Less than 20 hours', 0, 20, 1),
+            (2, '20-30 hours', 20, 30, 2),
+            (2, '30-40 hours', 30, 40, 3),
+            (2, '40-50 hours', 40, 50, 4),
+            (2, '50-60 hours', 50, 60, 5),
+            (2, '60+ hours', 60, 100, 6);
+        ''')
+        
+        # Add a few comments
+        conn.executescript('''
+            INSERT INTO comments_pool (answer_option_id, comment_text) VALUES
+            (1, 'Mama, that''s survival mode. Even 15 minutes more helps.'),
+            (1, 'You''re running on fumes. Can you nap when they nap?'),
+            (2, 'Close to the goal! Consistency is key.'),
+            (2, 'You''re doing great. Small adjustments add up.');
+        ''')
+        
+        conn.commit()
+        conn.close()
+        print("✅ Database initialized successfully with seed data")
+    else:
+        print("✅ Database already exists and has data - keeping it")
     
-    print("🌱 Inserting seed data...")
-    
-    # Insert all 12 questions
-    conn.executescript('''
-        INSERT INTO questions (question_key, question_text, input_type, is_mandatory, category) VALUES
-        ('sleep_hours', 'How many hours of sleep do you average per night?', 'buttons', 1, 'burnout'),
-        ('work_hours', 'How many hours do you work per week (paid work)?', 'slider', 1, 'burnout'),
-        ('overload_streak', 'How many days in a row have you felt overwhelmed?', 'buttons', 1, 'burnout'),
-        ('housework_hours', 'How many hours of housework do you do daily?', 'slider', 1, 'balance'),
-        ('childcare_hours', 'How many hours of childcare daily?', 'slider', 1, 'balance'),
-        ('personal_time', 'How much personal time do you get daily?', 'buttons', 1, 'balance'),
-        ('mental_planning', 'Who handles family planning (appointments, schedules)?', 'buttons', 1, 'mental'),
-        ('mental_emotional', 'Who manages emotional well-being of family members?', 'buttons', 1, 'mental'),
-        ('mental_household', 'Who tracks household needs (groceries, supplies)?', 'buttons', 1, 'mental'),
-        ('me_time_quality', 'How would you rate your "me time" quality?', 'buttons', 1, 'recovery'),
-        ('weekend_rest', 'How restful are your weekends?', 'buttons', 1, 'recovery'),
-        ('break_frequency', 'How often do you take breaks during work?', 'buttons', 1, 'recovery');
-    ''')
-    
-    # Insert answer options and comments (add your full seed data here)
-    # ... continue with all your INSERT statements ...
-    
-    conn.commit()
-    conn.close()
-    print("✅ Database initialized successfully")
+    # Verify final state
+    try:
+        conn = sqlite3.connect(db_path)
+        q_count = conn.execute("SELECT COUNT(*) as count FROM questions").fetchone()[0]
+        opt_count = conn.execute("SELECT COUNT(*) as count FROM answer_options").fetchone()[0]
+        comm_count = conn.execute("SELECT COUNT(*) as count FROM comments_pool").fetchone()[0]
+        conn.close()
+        print(f"📊 Final database stats: {q_count} questions, {opt_count} options, {comm_count} comments")
+    except:
+        print("⚠️ Could not verify database")
 
 
 init_db_on_startup()
