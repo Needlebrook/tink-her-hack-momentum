@@ -18,31 +18,50 @@ def get_db():
         db.row_factory = sqlite3.Row  # dictionary-like rows
     return db
 
-# Add near the top after your imports
-def init_db():
-    """Initialize database with schema and seed data if it doesn't exist"""
-    if not os.path.exists('momentum.db'):
-        print("📁 Creating new database...")
-        conn = sqlite3.connect('momentum.db')
+def init_db_on_startup():
+    try:
+        db_path = 'momentum.db'
+        print(f"📁 Checking for database at: {db_path}")
+        print(f"📂 Current directory: {os.getcwd()}")
+        print(f"📋 Files in directory: {os.listdir('.')}")
         
-        # Create tables (copy your CREATE TABLE statements here)
-        conn.executescript('''
-            CREATE TABLE users (...);  -- Your full schema here
-            CREATE TABLE questions (...);
-            -- ... all your CREATE TABLE statements ...
-        ''')
-        
-        # Insert seed data (copy your INSERT statements here)
-        conn.executescript('''
-            -- Your INSERT statements for questions, answer_options, comments_pool
-        ''')
-        
-        conn.commit()
-        conn.close()
-        print("✅ Database initialized with seed data!")
-
-# Call it when app starts
-init_db()
+        if not os.path.exists(db_path):
+            print("⚙️ Database not found. Creating new one...")
+            conn = sqlite3.connect(db_path)
+            
+            # Your schema creation
+            print("📝 Creating tables...")
+            conn.executescript('''
+                -- YOUR COMPLETE SCHEMA HERE
+            ''')
+            
+            print("🌱 Inserting seed data...")
+            # Your seed data
+            conn.executescript('''
+                -- YOUR SEED DATA HERE
+            ''')
+            
+            conn.commit()
+            conn.close()
+            print("✅ Database created successfully")
+            
+            # Verify it worked
+            conn = sqlite3.connect(db_path)
+            tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
+            print(f"📊 Tables created: {[t[0] for t in tables]}")
+            conn.close()
+        else:
+            print("✅ Database already exists")
+            # Verify it's readable
+            conn = sqlite3.connect(db_path)
+            tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
+            print(f"📊 Existing tables: {[t[0] for t in tables]}")
+            conn.close()
+            
+    except Exception as e:
+        print(f"❌ DATABASE INIT ERROR: {e}")
+        import traceback
+        traceback.print_exc()
 
 @app.teardown_appcontext
 def close_connection(exception):
