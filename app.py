@@ -413,6 +413,35 @@ def debug_routes():
             'path': str(rule)
         })
     return jsonify(routes)
+@app.route('/debug-render')
+def debug_render():
+    """Check what's different on Render"""
+    import os
+    import sqlite3
+    
+    info = {
+        'platform': os.environ.get('RENDER', 'not set'),
+        'working_dir': os.getcwd(),
+        'files_in_dir': os.listdir('.'),
+        'templates_exist': os.path.exists('templates/questions.html'),
+        'database_exists': os.path.exists('momentum.db'),
+    }
+    
+    # Check database content
+    if os.path.exists('momentum.db'):
+        try:
+            conn = sqlite3.connect('momentum.db')
+            questions = conn.execute("SELECT COUNT(*) as count FROM questions").fetchone()[0]
+            info['question_count'] = questions
+            
+            # Check a sample question
+            sample = conn.execute("SELECT * FROM questions LIMIT 1").fetchone()
+            info['sample_question'] = dict(sample) if sample else None
+            conn.close()
+        except Exception as e:
+            info['db_error'] = str(e)
+    
+    return jsonify(info)
 
 @app.route('/save_response', methods=['POST'])
 def save_response():
