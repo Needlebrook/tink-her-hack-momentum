@@ -402,6 +402,18 @@ def questions():
         is_new_user=session.get('is_new_user', False)
     )
 
+@app.route('/debug-routes')
+def debug_routes():
+    """List all registered routes"""
+    routes = []
+    for rule in app.url_map.iter_rules():
+        routes.append({
+            'endpoint': rule.endpoint,
+            'methods': list(rule.methods),
+            'path': str(rule)
+        })
+    return jsonify(routes)
+
 @app.route('/save_response', methods=['POST'])
 def save_response():
     """Save answer and return random comment"""
