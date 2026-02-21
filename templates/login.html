@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momentum · continue</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+     <style>
+        body {
+            background: linear-gradient(145deg, #fdf7f2 0%, #f9eee7 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 25px 40px -10px rgba(120, 80, 100, 0.2);
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .auth-title {
+            font-size: 2.5rem;
+            font-weight: 500;
+            background: linear-gradient(135deg, #6b4f8c, #c15b6c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        .auth-sub {
+            color: #7a6a5f;
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+        .form-control {
+            border-radius: 50px;
+            padding: 0.75rem 1.25rem;
+            border: 1px solid #eedbcf;
+            background: rgba(255, 255, 255, 0.6);
+            font-size: 1rem;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 0.25rem rgba(193, 91, 108, 0.15);
+            border-color: #c15b6c;
+            background: white;
+        }
+        .btn-auth {
+            background: linear-gradient(145deg, #8e6b8f, #b46f80);
+            border: none;
+            border-radius: 50px;
+            padding: 0.75rem;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: white;
+            width: 100%;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+        .btn-auth:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 18px rgba(180, 111, 128, 0.4);
+        }
+        .switch-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #7a6a5f;
+        }
+        .switch-link a {
+            color: #b46f80;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .switch-link a:hover {
+            text-decoration: underline;
+        } 
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <h2 class="auth-title">momentum</h2>
+        <p class="auth-sub">
+            {% if request.path == '/login' %}
+                welcome back 🌸
+            {% else %}
+                begin your journey
+            {% endif %}
+        </p>
+
+        <form method="POST" action="{{ request.path }}">
+            <div class="mb-4">
+                <input type="email" name="email" class="form-control" placeholder="email address" required>
+            </div>
+            <div class="mb-4">
+                <input type="password" name="password" class="form-control" placeholder="password" required>
+            </div>
+            {% if request.path == '/register' %}
+            <div class="mb-4">
+                <input type="password" name="confirm_password" class="form-control" placeholder="confirm password" required>
+            </div>
+            {% endif %}
+            <button type="submit" class="btn btn-auth">
+                {% if request.path == '/login' %}log in{% else %}create account{% endif %}
+            </button>
+        </form>
+
+        <div class="switch-link">
+            {% if request.path == '/login' %}
+                new here? <a href="/register">start fresh →</a>
+            {% else %}
+                already have an account? <a href="/login">log in</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

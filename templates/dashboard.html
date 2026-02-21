@@ -1,0 +1,283 @@
+{# Template for Flask/Jinja #}
+<!DOCTYPE html>
+<html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Momentum · your dashboard</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            background: linear-gradient(145deg, #fdf7f2 0%, #f9eee7 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 2rem 1rem;
+        }
+        .dashboard-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .greeting {
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: #3a2e27;
+        }
+        .greeting span {
+            background: linear-gradient(135deg, #6b4f8c, #c15b6c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+        }
+        .last-updated {
+            color: #9b8b80;
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+        .metric-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(6px);
+            border-radius: 32px;
+            padding: 2rem 1.5rem;
+            height: 100%;
+            border: 1px solid #fff3ea;
+            box-shadow: 0 15px 30px -8px rgba(100, 70, 80, 0.1);
+            transition: transform 0.2s;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        .metric-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #4a3b2f;
+            margin-bottom: 1.2rem;
+        }
+        /* Burnout ring (simple placeholder) */
+        .burnout-ring {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: conic-gradient(#f08080 0deg {{ burnout_deg }}deg, #e0c0b8 {{ burnout_deg }}deg 360deg);
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3a2e27;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .burnout-ring span {
+            background: white;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .burnout-label {
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        .burnout-desc {
+            color: #7a6a5f;
+        }
+
+        /* Balance bar */
+        .balance-bar-container {
+            background: #eedbcf;
+            border-radius: 30px;
+            height: 20px;
+            width: 100%;
+            margin: 1.5rem 0 0.5rem;
+        }
+        .balance-fill {
+            height: 20px;
+            border-radius: 30px;
+            background: linear-gradient(90deg, #c15b6c, #8e6b8f);
+            width: {{ balance_score }}%;
+        }
+        .balance-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #9b8b80;
+        }
+
+        /* Mental load dual bar */
+        .mental-stats {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .mental-bar-bg {
+            background: #eedbcf;
+            border-radius: 20px;
+            height: 30px;
+            width: 100%;
+            position: relative;
+            margin: 0.5rem 0;
+        }
+        .mental-bar-you {
+            background: #c15b6c;
+            border-radius: 20px 0 0 20px;
+            height: 30px;
+            width: {{ mental_load_you }}%;
+        }
+        .mental-bar-partner {
+            background: #8e6b8f;
+            border-radius: 0 20px 20px 0;
+            height: 30px;
+            width: {{ mental_load_partner }}%;
+        }
+        .mental-bar-wrapper {
+            display: flex;
+            width: 100%;
+        }
+
+        /* Recovery leaf meter (simple emoji stand-in) */
+        .recovery-meter {
+            font-size: 3rem;
+            line-height: 1.2;
+        }
+        .recovery-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #4a3b2f;
+        }
+
+        .update-btn {
+            background: linear-gradient(145deg, #8e6b8f, #b46f80);
+            border: none;
+            border-radius: 60px;
+            padding: 0.8rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 2rem;
+            transition: 0.2s;
+        }
+        .update-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 18px rgba(180, 111, 128, 0.4);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <div>
+                <h1 class="greeting">your <span>momentum</span></h1>
+                <p class="last-updated">last updated • just now</p>
+            </div>
+            <a href="/questions" class="update-btn">↻ update answers</a>
+        </div>
+
+        <!-- 4 Metric Cards Grid -->
+        <div class="row g-4 mt-2">
+            <!-- 1. Burnout Risk -->
+            <div class="col-md-6 col-lg-3">
+                <div class="metric-card text-center">
+                    <div class="metric-title">🔥 burnout risk</div>
+                    <div class="burnout-ring">
+                        <span>{{ burnout_score }}%</span>
+                    </div>
+                    <div class="burnout-label">
+                        {% if burnout_score < 40 %}
+                            <span class="text-success">✨ stable</span>
+                        {% elif burnout_score < 70 %}
+                            <span class="text-warning">⚠️ strained</span>
+                        {% else %}
+                            <span class="text-danger">🔴 high risk</span>
+                        {% endif %}
+                    </div>
+                    <div class="burnout-desc small">you're carrying a lot. let's lighten where we can</div>
+                </div>
+            </div>
+
+            <!-- 2. Work–Life Balance -->
+            <div class="col-md-6 col-lg-3">
+                <div class="metric-card">
+                    <div class="metric-title">⚖️ work–life balance</div>
+                    <div class="balance-bar-container">
+                        <div class="balance-fill" style="width: {{ balance_score }}%;"></div>
+                    </div>
+                    <div class="balance-labels">
+                        <span>overloaded</span>
+                        <span>balanced</span>
+                    </div>
+                    <div class="text-center mt-3">
+                        {% if balance_score > 70 %}
+                            <span class="badge bg-success p-2">balanced ✨</span>
+                        {% elif balance_score > 40 %}
+                            <span class="badge bg-warning p-2">slightly imbalanced</span>
+                        {% else %}
+                            <span class="badge bg-danger p-2">overloaded</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Mental Load Distribution (YOUR DIFFERENTIATOR) -->
+            <div class="col-md-6 col-lg-3">
+                <div class="metric-card">
+                    <div class="metric-title">🧠 mental load</div>
+                    <div class="mental-stats">
+                        <span>you {{ mental_load_you }}%</span>
+                        <span>partner {{ mental_load_partner }}%</span>
+                    </div>
+                    <div class="mental-bar-wrapper">
+                        <div class="mental-bar-you" style="width: {{ mental_load_you }}%;"></div>
+                        <div class="mental-bar-partner" style="width: {{ mental_load_partner }}%;"></div>
+                    </div>
+                    <p class="small text-muted mt-2">invisible work · school, plans, emotions</p>
+                    {% if mental_load_you > 70 %}
+                        <p class="text-danger small mb-0">you're the family CEO — can you delegate?</p>
+                    {% elif mental_load_you < 40 %}
+                        <p class="text-success small mb-0">true partnership 🌟</p>
+                    {% else %}
+                        <p class="text-warning small mb-0">shared, but room to grow</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 4. Recovery Index -->
+            <div class="col-md-6 col-lg-3">
+                <div class="metric-card text-center">
+                    <div class="metric-title">🌿 recovery</div>
+                    <div class="recovery-meter">
+                        {% if recovery_index == 'High Recovery' %}
+                            <span>🍃🍃🍃</span>
+                            <div class="recovery-text text-success">high recovery</div>
+                        {% elif recovery_index == 'Moderate' %}
+                            <span>🍃🍃</span>
+                            <div class="recovery-text text-warning">moderate</div>
+                        {% else %}
+                            <span>🍃</span>
+                            <div class="recovery-text text-danger">depleted</div>
+                        {% endif %}
+                    </div>
+                    <div class="small text-muted mt-2">rest + me-time vs overload</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optional encouragement line -->
+        <div class="text-center mt-5 pt-3">
+            <p class="fs-5 fst-italic" style="color: #7a6a5f;">"you're not behind; you're carrying a lot. let's make it visible."</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
