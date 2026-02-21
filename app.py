@@ -1,3 +1,4 @@
+import os
 import sqlite3
 import random
 import uuid
@@ -16,6 +17,32 @@ def get_db():
         db = g._database = sqlite3.connect(DATABASE)
         db.row_factory = sqlite3.Row  # dictionary-like rows
     return db
+
+# Add near the top after your imports
+def init_db():
+    """Initialize database with schema and seed data if it doesn't exist"""
+    if not os.path.exists('momentum.db'):
+        print("📁 Creating new database...")
+        conn = sqlite3.connect('momentum.db')
+        
+        # Create tables (copy your CREATE TABLE statements here)
+        conn.executescript('''
+            CREATE TABLE users (...);  -- Your full schema here
+            CREATE TABLE questions (...);
+            -- ... all your CREATE TABLE statements ...
+        ''')
+        
+        # Insert seed data (copy your INSERT statements here)
+        conn.executescript('''
+            -- Your INSERT statements for questions, answer_options, comments_pool
+        ''')
+        
+        conn.commit()
+        conn.close()
+        print("✅ Database initialized with seed data!")
+
+# Call it when app starts
+init_db()
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -525,4 +552,5 @@ def health():
  
 # MAIN
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000)) 
+    app.run(host='0.0.0.0', port=port, debug=False)
