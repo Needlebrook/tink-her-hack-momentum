@@ -185,7 +185,7 @@ Redirects to /questions (new user) or /dashboard (existing)
 ## Project Demo
 
 ### Video
-[https://youtu.be/pvjXJ85yUEI]
+[https://youtu.be/rVzudrmxjnI]
 
 *Explain what the video demonstrates - key features, user flow, technical highlights*
 
