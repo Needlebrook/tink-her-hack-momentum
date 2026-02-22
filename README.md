@@ -2,11 +2,11 @@
   <img src="./img.png" alt="Project Banner" width="100%">
 </p>
 
-# [Project Name] 🎯
+# Momentum 🎯
 
 ## Basic Details
 
-### Team Name: [Name]
+### Team Name: Zivora
 
 ### Team Members
 - Member 1: Celia Victor - Toc H Institute of Science And Technology
@@ -66,15 +66,6 @@ or
 ```bash
 flask run
 ```
-### For Hardware:
-
-#### Components Required
-[List all components needed with specifications]
-
-#### Circuit Setup
-[Explain how to set up the circuit]
-
----
 
 ## Project Documentation
 
@@ -82,60 +73,29 @@ flask run
 
 #### Screenshots (Add at least 3)
 
-![Screenshot1](Add screenshot 1 here with proper name)
+<img width="629" height="514" alt="Screenshot 2026-02-22 040204" src="https://github.com/user-attachments/assets/24b252fc-5f55-4122-811c-51bb0c31e489" />
 *Landing Page*
 
-![Screenshot2](Add screenshot 2 here with proper name)
+<img width="806" height="842" alt="Screenshot 2026-02-22 031922" src="https://github.com/user-attachments/assets/8b047784-5726-4ced-899b-ba5ea938df42" />
 *questions*
 
-![Screenshot3](Add screenshot 3 here with proper name)
+<img width="1462" height="670" alt="Screenshot 2026-02-22 031749" src="https://github.com/user-attachments/assets/a803a4e5-2a3e-46ad-bc5c-08684c86df27" />
 *Dashboard - I*
 
-![Screenshot4](Add screenshot 3 here with proper name)
+<img width="1445" height="615" alt="Screenshot 2026-02-22 031849" src="https://github.com/user-attachments/assets/a151fd1f-de42-4662-a4c4-aedcccf4d1ce" />
 *Dashboard - II*
+
 #### Diagrams
 
 **System Architecture:**
 
-┌─────────────┐     ┌──────────────┐     ┌─────────────┐
-│   Browser   │────▶│  Flask App   │────▶│  SQLite DB  │
-│  (Frontend) │◀────│  (Backend)   │◀────│             │
-└─────────────┘     └──────────────┘     └─────────────┘
-                           │
-                           ▼
-                    ┌──────────────┐
-                    │    Metrics   │
-                    │  Calculation │
-                    │    Engine    │
-                    └──────────────┘
+<img width="569" height="300" alt="Screenshot 2026-02-22 041733" src="https://github.com/user-attachments/assets/18d14774-f961-4111-b834-912c7342b61f" />
+
 *Flask handles routing and business logic, SQLite stores user responses, and the metrics engine calculates scores deterministically.*
 
 **Application Workflow:**
 
-┌─────────┐
-│  Login  │
-└────┬────┘
-     ▼
-┌──────────────┐     ┌─────────────────┐
-│ New User?    │────▶│ Answer 12 random│
-│ (12 ques)    │     │    questions    │
-└──────────────┘     └────────┬────────┘
-                              ▼
-┌──────────────┐     ┌─────────────────┐
-│ Returning    │────▶│ Answer 3 random │
-│ User         │     │   unanswered    │
-└──────────────┘     └────────┬────────┘
-                              ▼
-                    ┌─────────────────────┐
-                    │  Dashboard shows    │
-                    │  4 updated metrics  │
-                    └──────────┬──────────┘
-                              ▼
-                    ┌─────────────────────┐
-                    │ "More Questions?"   │
-                    │  (5 more questions) │
-                    └─────────────────────┘
-*Add caption explaining your workflow*
+<img width="422" height="559" alt="Screenshot 2026-02-22 041928" src="https://github.com/user-attachments/assets/6c446fb7-9ec9-4da5-822a-664c45260aea" />
 
 ---
 
@@ -226,12 +186,9 @@ Redirects to /questions (new user) or /dashboard (existing)
 ## Project Demo
 
 ### Video
-[Add your demo video link here - YouTube, Google Drive, etc.]
+[https://youtu.be/vm_iPITceN0]
 
 *Explain what the video demonstrates - key features, user flow, technical highlights*
-
-### Additional Demos
-[Add any extra demo materials/links - Live site, APK download, online demo, etc.]
 
 ---
 
@@ -272,8 +229,7 @@ Mental load distribution metric concept (unique differentiator)
 ## Team Contributions
 
 - Celia Victor :  Frontend development, Database Design & Population, Documentation
-- Navomi Jisha Sajie:
-Frontend development, UI/UX design
+- Navomi Jisha Sajie: Frontend development, UI/UX design
 
 ---
 
