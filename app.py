@@ -470,59 +470,55 @@ def logout():
 # ROUTES: QUESTIONNAIRE
 @app.route('/questions')
 def questions():
-    """Show questionnaire"""
+    """Show questionnaire - SIMPLIFIED FOR RENDER"""
     user = get_current_user()
     if not user:
         return redirect('/login')
     
+    # Get ONE random question
+    question_row = query_db("SELECT * FROM questions ORDER BY RANDOM() LIMIT 1", one=True)
+    if not question_row:
+        return "No questions in database!", 500
+    
+    # FORCE CONVERSION TO DICTIONARY
+    current_question = {
+        'id': question_row['id'],
+        'question_text': question_row['question_text'],
+        'question_key': question_row['question_key'],
+        'input_type': question_row['input_type'],
+        'category': question_row['category']
+    }
+    
+    # Get options and force to list of dicts
+    option_rows = query_db("SELECT * FROM answer_options WHERE question_id = ? ORDER BY sort_order", [current_question['id']])
+    answer_options = []
+    for row in option_rows:
+        answer_options.append({
+            'id': row['id'],
+            'display_text': row['display_text'],
+            'value_min': row['value_min'],
+            'value_max': row['value_max']
+        })
+    
+    # Simple session tracking
     if 'current_session_id' not in session:
         session['current_session_id'] = generate_session_id()
     
-    unanswered_count = count_unanswered_questions(user['id'])
-    
-    if session.get('is_new_user', False):
-        questions_list = get_next_questions(user['id'], count=12, mode='new_user')
-        session['questions_remaining'] = 12
-        session['total_in_session'] = 12
-        session['question_mode'] = 'new_user'
-    else:
-        if 'question_session_active' in session:
-            questions_list = get_next_questions(user['id'], count=5, mode='random')
-            session['questions_remaining'] = 5
-            session['total_in_session'] = 5
-        else:
-            questions_list = get_next_questions(user['id'], count=3, mode='unanswered')
-            session['questions_remaining'] = 3
-            session['total_in_session'] = 3
-            session['question_mode'] = 'returning_first'
-    
-    if not questions_list:
-        session.pop('current_session_id', None)
-        session.pop('question_session_active', None)
-        session['is_new_user'] = False
-        return redirect('/dashboard')
-   
-    session['current_questions'] = [q['id'] for q in questions_list]
-    current_q = questions_list[0]
-
-    answer_options = query_db("""
-        SELECT * FROM answer_options 
-        WHERE question_id = ? 
-        ORDER BY sort_order
-    """, [current_q['id']])
-
+    # Count answers in this session
     answered_count = query_db("""
         SELECT COUNT(*) as count FROM responses 
         WHERE user_id = ? AND session_id = ?
     """, [user['id'], session['current_session_id']], one=True)['count']
     
+    print(f"✅ Questions page loaded - Question: {current_question['question_text']}, Options: {len(answer_options)}")
+    
     return render_template(
         'questions.html',
-        current_question=current_q,
+        current_question=current_question,
         answer_options=answer_options,
         answered_count=answered_count,
-        total_in_session=session['total_in_session'],
-        is_new_user=session.get('is_new_user', False)
+        total_in_session=5,
+        is_new_user=False
     )
 
 @app.route('/debug-routes')
