@@ -13,7 +13,7 @@
 - Member 2: Navomi Jisha Sajie - Toc H Institute of Science And Technology
 
 ### Hosted Project Link
-https://momentum-t3c2.onrender.com/
+https://tink-her-hack-momentum.onrender.com/
 
 ### Project Description
 Momentum is a structured self-assessment app that helps women measure and rebalance their daily workload across paid work, domestic labor, childcare, rest, and personal time. Through gentle, encouraging questions and visual metrics, it makes invisible cognitive labor visible.
@@ -186,7 +186,7 @@ Redirects to /questions (new user) or /dashboard (existing)
 ## Project Demo
 
 ### Video
-[https://youtu.be/vm_iPITceN0]
+[https://youtu.be/pvjXJ85yUEI]
 
 *Explain what the video demonstrates - key features, user flow, technical highlights*
 
