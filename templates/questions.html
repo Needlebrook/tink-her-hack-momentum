@@ -164,6 +164,92 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         } 
+
+    /* ===== MOBILE RESPONSIVE - QUESTIONS PAGE ===== */
+@media (max-width: 768px) {
+    .questions-container {
+        padding: 1rem 0.5rem;
+    }
+    
+    .progress-card {
+        padding: 0.6rem 1rem;
+    }
+    
+    .progress-text {
+        font-size: 0.9rem;
+    }
+    
+    .question-card {
+        padding: 1.5rem 1.2rem;
+    }
+    
+    .question-text {
+        font-size: 1.6rem;
+    }
+    
+    .option-btn {
+        padding: 0.8rem 1.2rem;
+        font-size: 1rem;
+    }
+    
+    .comment-bubble {
+        padding: 1rem 1.2rem;
+        font-size: 1rem;
+    }
+    
+    .btn-soft {
+        padding: 0.4rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .progress-card {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .progress {
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+    
+    .question-card {
+        padding: 1.2rem 1rem;
+    }
+    
+    .question-text {
+        font-size: 1.4rem;
+    }
+    
+    .option-btn {
+        padding: 0.7rem 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .btn-more, .btn-dashboard {
+        display: block;
+        width: 80%;
+        margin: 0.5rem auto;
+    }
+}
+
+@media (max-width: 360px) {
+    .question-text {
+        font-size: 1.2rem;
+    }
+    
+    .option-btn {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    
+    .comment-bubble {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+    }
+}
     </style>
 </head>
 <body>
