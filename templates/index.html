@@ -6,7 +6,6 @@
     <title>Momentum · balance made visible</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
         <!-- Google Fonts - Playfair Display -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -94,12 +93,13 @@
 }
 
 @media (max-width: 480px) {
-    .title {
-        font-size: 3rem;  /* Even smaller for phones */
+        .title {
+        font-size: 4rem;
     }
-    
     .subtitle {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
+        padding: 0 1rem;
+        color: #b8a99c;  /* Add this for better contrast */
     }
     
     .btn-custom {
