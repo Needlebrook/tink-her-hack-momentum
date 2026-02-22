@@ -359,6 +359,65 @@ def count_unanswered_questions(user_id):
     
     return total_questions - answered
 
+def generate_feedback(burnout, balance, mental_you, recovery):
+    """Generate personalized feedback based on metrics"""
+    feedback = []
+    
+    # Burnout feedback
+    if burnout >= 70:
+        feedback.append("🔴 **High Burnout Risk:** Your body is signaling overload. Consider taking a personal day and delegating non-essential tasks.")
+    elif burnout >= 40:
+        feedback.append("🟡 **Moderate Strain:** You're managing, but barely. Try to carve out 15 minutes of uninterrupted rest daily.")
+    else:
+        feedback.append("🟢 **Low Burnout:** You're maintaining well! Keep protecting your boundaries.")
+    
+    # Balance feedback
+    if balance < 40:
+        feedback.append("⚖️ **Overloaded:** Work and duties are consuming your time. Can you automate or outsource one household task?")
+    elif balance < 70:
+        feedback.append("⚖️ **Slightly Imbalanced:** You're close to balance. Try a 'power down' hour before bed with no screens.")
+    else:
+        feedback.append("⚖️ **Well-Balanced:** Your time distribution looks healthy! You're modeling sustainable habits.")
+    
+    # Mental load feedback
+    if mental_you > 70:
+        feedback.append("🧠 **Heavy Mental Load:** You're carrying most cognitive labor. Have a conversation about sharing school tracking or meal planning.")
+    elif mental_you < 40:
+        feedback.append("🧠 **Shared Mental Load:** True partnership! Your cognitive labor is well distributed.")
+    else:
+        feedback.append("🧠 **Mixed Mental Load:** You're sharing some tasks. Identify one mental load item to delegate this week.")
+    
+    # Recovery feedback
+    if recovery == "Depleted":
+        feedback.append("🌿 **Depleted:** Your rest isn't matching your effort. Even 10 minutes of guilt-free me-time helps reset.")
+    elif recovery == "Moderate":
+        feedback.append("🌿 **Moderate Recovery:** You're getting some rest. Try a tech-free Sunday morning to recharge.")
+    else:
+        feedback.append("🌿 **High Recovery:** Your rest habits are excellent! You're protecting your well-being.")
+    
+    # Pick 2-3 most relevant based on extreme scores
+    priority_feedback = []
+    
+    # Always include highest priority issues
+    if burnout >= 70:
+        priority_feedback.append(feedback[0])
+    if balance < 40:
+        priority_feedback.append(feedback[1])
+    if mental_you > 70:
+        priority_feedback.append(feedback[2])
+    if recovery == "Depleted":
+        priority_feedback.append(feedback[3])
+    
+    # If nothing extreme, give general encouragement
+    if len(priority_feedback) == 0:
+        priority_feedback = [
+            "✨ You're doing well! Small consistent actions maintain momentum.",
+            feedback[0],  # Burnout
+            feedback[3]   # Recovery
+        ]
+    
+    return priority_feedback[:3]  # Return top 3
+
 # QUESTIONNAIRE LOGIC
 def get_next_questions(user_id, count=5, mode='random'):
     """Get next set of questions based on mode:
@@ -696,6 +755,14 @@ def dashboard():
     # For burnout ring, convert score to degrees (0-360)
     burnout_deg = (metrics['burnout_score'] / 100) * 360
     
+    # Generate personalized feedback
+    feedback_list = generate_feedback(
+        metrics['burnout_score'],
+        metrics['balance_score'],
+        metrics['mental_load_you'],
+        metrics['recovery_index']
+    )
+    
     return render_template(
         'dashboard.html',
         user=user,
@@ -705,7 +772,8 @@ def dashboard():
         mental_load_you=metrics['mental_load_you'],
         mental_load_partner=metrics['mental_load_partner'],
         recovery_index=metrics['recovery_index'],
-        last_updated=metrics.get('calculated_at', 'Just now')
+        last_updated=metrics.get('calculated_at', 'Just now'),
+        feedback=feedback_list  # ← NEW
     )
 
 @app.route('/api/metrics/latest')
