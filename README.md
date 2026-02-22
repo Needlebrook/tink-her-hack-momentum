@@ -73,17 +73,21 @@ flask run
 
 #### Screenshots (Add at least 3)
 
-<img width="629" height="514" alt="Screenshot 2026-02-22 040204" src="https://github.com/user-attachments/assets/24b252fc-5f55-4122-811c-51bb0c31e489" />
-*Landing Page*
+<img width="1919" height="901" alt="Screenshot 2026-02-22 102038" src="https://github.com/user-attachments/assets/bb625b80-3265-47a2-9edf-2d146d9b3176" />
 
-<img width="806" height="842" alt="Screenshot 2026-02-22 031922" src="https://github.com/user-attachments/assets/8b047784-5726-4ced-899b-ba5ea938df42" />
-*questions*
+<img width="893" height="841" alt="Screenshot 2026-02-22 102048" src="https://github.com/user-attachments/assets/3c060264-0d23-4a79-9955-fdc98357805c" />
 
-<img width="1462" height="670" alt="Screenshot 2026-02-22 031749" src="https://github.com/user-attachments/assets/a803a4e5-2a3e-46ad-bc5c-08684c86df27" />
-*Dashboard - I*
+<img width="1607" height="881" alt="Screenshot 2026-02-22 102117" src="https://github.com/user-attachments/assets/7bfc8d6c-c90b-4ead-a67b-a5ee32251c96" />
 
-<img width="1445" height="615" alt="Screenshot 2026-02-22 031849" src="https://github.com/user-attachments/assets/a151fd1f-de42-4662-a4c4-aedcccf4d1ce" />
-*Dashboard - II*
+<img width="1581" height="628" alt="Screenshot 2026-02-22 102126" src="https://github.com/user-attachments/assets/5f0d917c-0307-4003-a6c1-74216a19c58e" />
+
+<img width="1543" height="906" alt="Screenshot 2026-02-22 102204" src="https://github.com/user-attachments/assets/90964d3c-b301-42a8-bdbf-c11e1dbc3d5c" />
+
+<img width="845" height="892" alt="Screenshot 2026-02-22 102333" src="https://github.com/user-attachments/assets/c9dc1b1a-f9ab-47e4-bf9f-5499179a8a80" />
+
+<img width="955" height="890" alt="Screenshot 2026-02-22 102306" src="https://github.com/user-attachments/assets/c24a1685-10e3-48db-bca6-8d1e8bfb6c4c" />
+
+<img width="894" height="861" alt="Screenshot 2026-02-22 102240" src="https://github.com/user-attachments/assets/07cdfed7-9082-4327-b7e9-a0d4879e2fa6" />
 
 #### Diagrams
 
@@ -101,17 +105,12 @@ flask run
 
 
 #### Build Photos
+![WhatsApp Image 2026-02-22 at 10 40 07 AM](https://github.com/user-attachments/assets/6dfd9ab7-49ac-42ff-a457-302e8bd84b43)
+![WhatsApp Image 2026-02-22 at 10 38 04 AM](https://github.com/user-attachments/assets/1881c6f9-4f6c-44c5-afd4-5b33b9924943)
+![WhatsApp Image 2026-02-22 at 10 41 48 AM](https://github.com/user-attachments/assets/1d4b1ec9-65c5-47ee-afab-fb65f0945e5e)
+![WhatsApp Image 2026-02-22 at 10 37 50 AM](https://github.com/user-attachments/assets/990fce36-733e-4a1a-8054-d6eb66dd4d11)
 
-![Team](Add photo of your team here)
 
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
 
 ---
 
